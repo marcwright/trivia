@@ -1,12 +1,16 @@
 const getQuestionButton = document.querySelector('#get-question-button');
 const answersForm = document.querySelector('#answersForm');
-const questionH1 = document.querySelector('#questionH1');
+const questionH2 = document.querySelector('#questionH2');
 const categoryH4 = document.querySelector('#categoryH4');
 const resultDiv = document.querySelector('#result');
+const countH1 = document.querySelector('#count');
+const category = document.querySelector('#category');
 
 let questionsArray = [];
 let questionCount = 0;
 let correct_answer = '';
+let numberCorrect = 0;
+let numQuestionsPlayed = 0;
 
 function getQuestions() {
   fetch('https://opentdb.com/api.php?amount=10')
@@ -14,7 +18,8 @@ function getQuestions() {
     .then((data) => {
       questionsArray = data.results;
       console.log(questionsArray);
-    });
+    })
+    .then((res) => displayQuestion());
 }
 
 function sanitizeString(str) {
@@ -23,10 +28,13 @@ function sanitizeString(str) {
     .replaceAll('&rdquo;', '"')
     .replaceAll('&quot;', '"')
     .replaceAll('&#039;', "'")
-    .replaceAll('&Uuml;', 'Ü');
+    .replaceAll('&Uuml;', 'Ü')
+    .replaceAll('&lsquo;', "'")
+    .replaceAll('&rsquo;', "'");
 }
 
 function displayQuestion() {
+  answersForm.addEventListener('change', checkAnswer, { once: true });
   resultDiv.textContent = '';
   let currentQuestion = questionsArray[questionCount];
   correct_answer = currentQuestion.correct_answer;
@@ -38,37 +46,43 @@ function displayQuestion() {
   const answers = allAnswersSanitized
     .map((ia) => {
       if (ia === correct_answer) {
-        return `<input type="checkbox" data-correct="true" id=${ia}>
+        return `<input type="radio" data-correct="true" name="choice" id=${ia}>
        <label for=${ia}>${ia}</label><br></br>`;
       } else {
-        return `<input type="checkbox" id=${ia}>
+        return `<input type="radio" name="choice" id=${ia} >
        <label for=${ia}>${ia}</label><br></br>`;
       }
     })
     .join(' ');
 
-  questionH1.textContent = sanitizeString(currentQuestion.question);
+  category.textContent = currentQuestion.category;
+  questionH2.textContent = sanitizeString(currentQuestion.question);
   answersForm.innerHTML = answers;
   questionCount += 1;
+  countH1.textContent = `Score: ${numberCorrect}/${numQuestionsPlayed}`;
 }
-
-function blinkCorrectAnswer() {}
 
 function checkAnswer(event) {
-  console.log(event.target.dataset.correct);
-  console.log('check answer');
-  let correctAnswerInput = document.querySelector('input[data-correct]');
-  console.log(correctAnswerInput);
+  numQuestionsPlayed += 1;
+  let correctAnswerLabel = document.querySelector(
+    'input[data-correct] + label'
+  );
+  console.log(event.target);
 
   if (event.target.dataset.correct) {
-    console.log('correct');
-    resultDiv.textContent = 'Correct';
+    numberCorrect += 1;
+    correctAnswerLabel.style.backgroundColor = 'green';
+    resultDiv.textContent = 'CORRECT';
   } else {
-    console.log('nope');
+    correctAnswerLabel.style.backgroundColor = 'green';
     resultDiv.textContent = 'WRONG';
   }
-}
 
-answersForm.addEventListener('change', checkAnswer);
-getQuestionButton.addEventListener('click', displayQuestion);
+  if (questionCount === questionsArray.length) {
+    questionCount = 0;
+    setTimeout(getQuestions, 1000);
+  } else {
+    setTimeout(displayQuestion, 1000);
+  }
+}
 window.onload = getQuestions();

@@ -1,0 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Gluten:wght@100;600&display=swap');
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: 'Gluten', cursive, Arial;
+  font-weight: lighter;
+}
+#questionH2 {
+  font-weight: 600;
+}

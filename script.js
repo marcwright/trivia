@@ -2,6 +2,7 @@ const getQuestionButton = document.querySelector('#get-question-button');
 const answersForm = document.querySelector('#answersForm');
 const questionH1 = document.querySelector('#questionH1');
 const categoryH4 = document.querySelector('#categoryH4');
+const resultDiv = document.querySelector('#result');
 
 let questionsArray = [];
 let questionCount = 0;
@@ -25,10 +26,13 @@ function sanitizeString(str) {
 }
 
 function displayQuestion() {
+  resultDiv.textContent = '';
   let currentQuestion = questionsArray[questionCount];
   correct_answer = currentQuestion.correct_answer;
   let allAnswers = [...currentQuestion.incorrect_answers, correct_answer];
   let allAnswersSanitized = allAnswers.map((str) => sanitizeString(str));
+  allAnswersSanitized = allAnswersSanitized.sort(() => Math.random() - 0.5);
+  console.log(allAnswers, allAnswersSanitized);
 
   const answers = allAnswersSanitized
     .map(
@@ -47,10 +51,16 @@ function checkAnswer(event) {
   console.log(event.target.value);
   console.log('check answer');
 
+  // let correctAnswerInput = document.querySelector(
+  //   `input[value=${correct_answer}]`
+  // );
+  console.log(correct_answer);
   if (event.target.value === correct_answer) {
     console.log('correct');
+    resultDiv.textContent = 'Correct';
   } else {
     console.log('nope');
+    resultDiv.textContent = 'WRONG';
   }
 }
 

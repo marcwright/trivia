@@ -5,6 +5,7 @@ const categoryH4 = document.querySelector('#categoryH4');
 
 let questionsArray = [];
 let questionCount = 0;
+let correct_answer = '';
 
 function getQuestions() {
   fetch('https://opentdb.com/api.php?amount=10')
@@ -25,11 +26,10 @@ function sanitizeString(str) {
 
 function displayQuestion() {
   let currentQuestion = questionsArray[questionCount];
-  let allAnswers = [
-    ...currentQuestion.incorrect_answers,
-    currentQuestion.correct_answer,
-  ];
+  correct_answer = currentQuestion.correct_answer;
+  let allAnswers = [...currentQuestion.incorrect_answers, correct_answer];
   let allAnswersSanitized = allAnswers.map((str) => sanitizeString(str));
+
   const answers = allAnswersSanitized
     .map(
       (ia) =>
@@ -37,13 +37,21 @@ function displayQuestion() {
        <label for=${ia}>${ia}</label><br></br>`
     )
     .join(' ');
+
   questionH1.textContent = sanitizeString(currentQuestion.question);
   answersForm.innerHTML = answers;
   questionCount += 1;
 }
 
-function checkAnswer() {
+function checkAnswer(event) {
+  console.log(event.target.value);
   console.log('check answer');
+
+  if (event.target.value === correct_answer) {
+    console.log('correct');
+  } else {
+    console.log('nope');
+  }
 }
 
 answersForm.addEventListener('change', checkAnswer);

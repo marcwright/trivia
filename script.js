@@ -9,6 +9,8 @@ const categoriesMenu = document.querySelector('#categoriesMenu');
 const difficultyMenu = document.querySelector('#difficultyMenu');
 const gameBoard = document.querySelector('.game-board');
 const categories = categoryArray;
+let allAnswersSanitized = [];
+let answers = [];
 let chosenCategory = '';
 let chosenDifficulty = '';
 
@@ -19,7 +21,9 @@ let numberCorrect = 0;
 let numQuestionsPlayed = 0;
 
 function getQuestions() {
-  fetch('https://opentdb.com/api.php?amount=10')
+  fetch(
+    `https://opentdb.com/api.php?amount=20&category=${chosenCategory}&difficulty=${chosenDifficulty}`
+  )
     .then((response) => response.json())
     .then((data) => {
       questionsArray = data.results;
@@ -48,25 +52,23 @@ function displayQuestion() {
   let currentQuestion = questionsArray[questionCount];
   correct_answer = currentQuestion.correct_answer;
   let allAnswers = [...currentQuestion.incorrect_answers, correct_answer];
-  let allAnswersSanitized = allAnswers.map((str) => sanitizeString(str));
+  allAnswersSanitized = allAnswers.map((str) => sanitizeString(str));
   allAnswersSanitized = allAnswersSanitized.sort(() => Math.random() - 0.5);
   // console.log(allAnswers, allAnswersSanitized);
 
-  const answers = allAnswersSanitized
-    .map((ia) => {
-      if (ia === correct_answer) {
-        return `<input type="radio" data-correct="true" name="choice" id=${ia}>
+  answers = allAnswersSanitized.map((ia, index) => {
+    if (ia === correct_answer) {
+      return `<input type="radio" data-correct="true" data-index=${index} name="choice" id=${ia}>
        <label for=${ia}>${ia}</label><br></br>`;
-      } else {
-        return `<input type="radio" name="choice" id=${ia} >
+    } else {
+      return `<input type="radio" data-index=${index} name="choice" id=${ia} >
        <label for=${ia}>${ia}</label><br></br>`;
-      }
-    })
-    .join(' ');
+    }
+  });
 
   category.textContent = currentQuestion.category;
   questionH2.textContent = sanitizeString(currentQuestion.question);
-  answersForm.innerHTML = answers;
+  answersForm.innerHTML = answers.join(' ');
   questionCount += 1;
   countH1.textContent = `Score: ${numberCorrect}/${numQuestionsPlayed}`;
 }
@@ -83,6 +85,7 @@ function checkAnswer(event) {
     correctAnswerLabel.style.backgroundColor = 'green';
     resultDiv.textContent = 'CORRECT';
   } else {
+    event.target.style.backgroundColor = 'red';
     correctAnswerLabel.style.backgroundColor = 'green';
     resultDiv.textContent = 'WRONG';
   }

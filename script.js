@@ -6,9 +6,11 @@ const resultDiv = document.querySelector('#result');
 const countH1 = document.querySelector('#count');
 const category = document.querySelector('#category');
 const categoriesMenu = document.querySelector('#categoriesMenu');
+const difficultyMenu = document.querySelector('#difficultyMenu');
+const gameBoard = document.querySelector('.game-board');
 const categories = categoryArray;
-const chosenCategory = '';
-const chosenDifficultly = '';
+let chosenCategory = '';
+let chosenDifficulty = '';
 
 let questionsArray = [];
 let questionCount = 0;
@@ -38,6 +40,9 @@ function sanitizeString(str) {
 }
 
 function displayQuestion() {
+  gameBoard.style.display = 'flex';
+  categoriesMenu.style.display = 'none';
+  difficultyMenu.style.display = 'none';
   answersForm.addEventListener('change', checkAnswer, { once: true });
   resultDiv.textContent = '';
   let currentQuestion = questionsArray[questionCount];
@@ -91,23 +96,28 @@ function checkAnswer(event) {
 }
 
 function displayCategories() {
-  const categoryOptions = categories.map(
-    (cat) => `<option value=${cat.id}>${cat.name}</option>`
-  );
-  const ui = `
+  categoriesMenu.innerHTML = `
     <select name="categoriesMenu" id="categoriesMenu">
       <option default>Choose a Category</option>
-      ${categoryOptions}
+      ${categories.map((cat) => `<option value=${cat.id}>${cat.name}</option>`)}
     </select>`;
-  categoriesMenu.innerHTML = ui;
 }
 
-function getSpecificCategory(event) {
-  console.log(event.target.value);
+function chooseCategory(event) {
+  chosenCategory = event.target.value;
+  console.log(chosenCategory);
+  difficultyMenu.style.display = 'block';
 }
 
-categoriesMenu.addEventListener('change', getSpecificCategory);
+function chooseDifficulty(event) {
+  chosenDifficulty = event.target.value;
+  console.log(chosenDifficulty);
+  getQuestions();
+}
+
+categoriesMenu.addEventListener('change', chooseCategory);
+difficultyMenu.addEventListener('change', chooseDifficulty);
 window.onload = function () {
   displayCategories();
-  getQuestions();
+  // getQuestions();
 };

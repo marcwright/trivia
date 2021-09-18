@@ -9,12 +9,21 @@
   </head>
   <body>
     <!-- <button id="get-question-button">Start Game</button> -->
-    <h1 id="count"></h1>
-    <h2 id="category"></h2>
-    <h2 id="questionH2"></h2>
-    <h4 id="categoryH4"></h4>
-    <form id="answersForm"></form>
-    <div id="result"></div>
+    <select name="categoriesMenu" id="categoriesMenu">
+      <option default>Choose a Category</option>
+    </select>
+    <select name="difficultyMenu" id="difficultyMenu">
+      <option default>Choose a Difficulty</option>
+    </select>
+    <div class="game-board">
+      <h1 id="count"></h1>
+      <h2 id="category"></h2>
+      <h2 id="questionH2"></h2>
+      <h4 id="categoryH4"></h4>
+      <form id="answersForm"></form>
+      <div id="result"></div>
+    </div>
+    <script src="./categories.js"></script>
     <script src="./script.js"></script>
   </body>
 </html>

@@ -5,6 +5,10 @@ const categoryH4 = document.querySelector('#categoryH4');
 const resultDiv = document.querySelector('#result');
 const countH1 = document.querySelector('#count');
 const category = document.querySelector('#category');
+const categoriesMenu = document.querySelector('#categoriesMenu');
+const categories = categoryArray;
+const chosenCategory = '';
+const chosenDifficultly = '';
 
 let questionsArray = [];
 let questionCount = 0;
@@ -41,7 +45,7 @@ function displayQuestion() {
   let allAnswers = [...currentQuestion.incorrect_answers, correct_answer];
   let allAnswersSanitized = allAnswers.map((str) => sanitizeString(str));
   allAnswersSanitized = allAnswersSanitized.sort(() => Math.random() - 0.5);
-  console.log(allAnswers, allAnswersSanitized);
+  // console.log(allAnswers, allAnswersSanitized);
 
   const answers = allAnswersSanitized
     .map((ia) => {
@@ -85,4 +89,25 @@ function checkAnswer(event) {
     setTimeout(displayQuestion, 1000);
   }
 }
-window.onload = getQuestions();
+
+function displayCategories() {
+  const categoryOptions = categories.map(
+    (cat) => `<option value=${cat.id}>${cat.name}</option>`
+  );
+  const ui = `
+    <select name="categoriesMenu" id="categoriesMenu">
+      <option default>Choose a Category</option>
+      ${categoryOptions}
+    </select>`;
+  categoriesMenu.innerHTML = ui;
+}
+
+function getSpecificCategory(event) {
+  console.log(event.target.value);
+}
+
+categoriesMenu.addEventListener('change', getSpecificCategory);
+window.onload = function () {
+  displayCategories();
+  getQuestions();
+};
